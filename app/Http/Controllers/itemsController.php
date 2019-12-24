@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Item;
 use Illuminate\Http\Request;
-
+use Validator;
 class itemsController extends Controller
 {
     /**
@@ -36,7 +36,21 @@ class itemsController extends Controller
      */
     public function store(Request $request)
     {
-        return 123;
+        $validator = Validator::make($request->all(),[
+                'text' => 'required',
+                 'body' => 'required'
+            ]);
+        if($validator->fails()){
+            $resopnse = array('resopnse'=> $validator->messages(),'success'=>false);
+            return $resopnse;
+        }
+        else{
+            $item = new Item();
+            $item->text = $request->input('text');
+            $item->body = $request->input('body');
+            $item->save();
+            return response()->json($item);
+        }
     }
 
     /**
